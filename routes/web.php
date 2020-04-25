@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/hoge', 'hoge\HogeController@hoge');
+
+Route::get('/greet', 'GreetController@getAction');
