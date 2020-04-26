@@ -16,8 +16,8 @@ Route::get('/', function () {
 });
 
 Route::get('/hoge', 'hoge\HogeController@getAction');
-Route::post('/add', 'hoge\hogeController@add');
-Route::post('/delete/{id}', 'hoge\hogeController@delete');
+Route::post('/add', 'hoge\HogeController@add');
+Route::post('/delete/{id}', 'hoge\HogeController@delete');
 
 
 Route::get('/greet', 'GreetController@getAction');
