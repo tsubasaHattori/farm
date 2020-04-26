@@ -12,7 +12,7 @@
         <table border="0" width="640">
           <tr>
             <td colspan="2" width="100%">
-              <a href="/hoge" title="タイトル？"><font size="3">■家計簿</font></a>
+              <a href="" title="タイトル？"><font size="3">■家計簿</font></a>
             </td>
           </tr>
         </table>
