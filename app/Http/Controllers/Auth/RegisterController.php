@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Mail\EmailVerification;
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -49,7 +53,7 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
+            // 'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
@@ -63,10 +67,78 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
+        // return User::create([
+            // 'name' => 'name_test',
+        //     'email' => $data['email'],
+        //     'password' => Hash::make($data['password']),
+        // ]);
+
+        $user = User::create([
+            'name' => 'name_test',
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'email_verify_token' => base64_encode($data['email']),
         ]);
+
+        $email = new EmailVerification($user);
+        Mail::to($user->email)->send($email);
+
+        return $user;
+    }
+
+    public function pre_check(Request $request)
+    {
+        $this->validator($request->all())->validate();
+        //flash data
+        $request->flashOnly( 'email');
+
+        $bridge_request = $request->all();
+        // password マスキング
+        $bridge_request['password_mask'] = '******';
+
+        return view('auth.register_check')->with($bridge_request);
+    }
+
+    public function register(Request $request)
+    {
+        event(new Registered($user = $this->create( $request->all() )));
+
+        return view('auth.registered');
+    }
+
+    public function mainCheck(Request $request)
+    {
+        $request->validate([
+        'name' => 'required|string',
+        'name_pronunciation' => 'required|string',
+        'birth_year' => 'required|numeric',
+        'birth_month' => 'required|numeric',
+        'birth_day' => 'required|numeric',
+        ]);
+        //データ保持用
+        $email_token = $request->email_token;
+
+        $user = new User();
+        $user->name = $request->name;
+        $user->name_pronunciation = $request->name_pronunciation;
+        $user->birth_year = $request->birth_year;
+        $user->birth_month = $request->birth_month;
+        $user->birth_day = $request->birth_day;
+
+        return view('auth.main.register_check', compact('user','email_token'));
+    }
+
+    public function mainRegister(Request $request)
+    {
+        $user = User::where('email_verify_token',$request->email_token)->first();
+        $user->status = config('const.USER_STATUS.REGISTER');
+        $user->name = $request->name;
+        $user->name_pronunciation = $request->name_pronunciation;
+        $user->birth_year = $request->birth_year;
+        $user->birth_month = $request->birth_month;
+        $user->birth_day = $request->birth_day;
+        $user->save();
+
+        return view('auth.main.registered');
     }
 }

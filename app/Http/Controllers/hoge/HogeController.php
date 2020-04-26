@@ -9,7 +9,7 @@ use DB;
 
 class HogeController extends Controller
 {
-    public function getAction() {
+    public function getAction(Request $req) {
         $results = DB::table('saif')->select('*')->get();
         return view('hoge')->with('results', json_decode($results, true));
     }
@@ -25,8 +25,7 @@ class HogeController extends Controller
             'saif_money' => $value,
         ]);
 
-
-        return $this->getAction();
+        return $this->getAction($req);
     }
 
     public function delete(Request $req) {
@@ -34,6 +33,6 @@ class HogeController extends Controller
 
         DB::table('saif')->where('id', '=', $id)->delete();
 
-        return $this->getAction();
+        return $this->getAction($req);
     }
 }

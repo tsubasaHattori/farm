@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateHogeTable extends Migration
+class AddColumnUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class CreateHogeTable extends Migration
      */
     public function up()
     {
-        Schema::create('hoge', function (Blueprint $table) {
-            $table->increments('id');
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->tinyInteger('status')->default(0);
         });
     }
 
@@ -26,6 +25,8 @@ class CreateHogeTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('hoge');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('status');
+        });
     }
 }
