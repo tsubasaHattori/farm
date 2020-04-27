@@ -29,29 +29,55 @@
     margin: 1em 0 1em auto;
   }
 
-  .others-message .content-line {
-    width: 70%;
-    margin: 1em 0 1em 0;
-  }
-
-  .content-line .content-box,  .content-line .content-box-null {
-    display: inline-block;
-    margin-left: 10px;
-    border-radius: 8px;
-  }
-
-  .my-message .content-line .content-box {
-    color: #565656;
+  .my-message .content-box {
     background: #66FF99;
     box-shadow: 0px 0px 0px 9px #66FF99;
     text-align: left;
   }
 
-  .others-message .content-line .content-box {
-    color: #565656;
+  .others-message .content-line {
+    width: 70%;
+    margin: 1em 0 1em 0;
+  }
+  
+  .others-message .content-box {
     background: #ffeaea;
     box-shadow: 0px 0px 0px 9px #ffeaea;
   }
+
+  .content-box, .content-box-null {
+    color: #565656;
+    display: inline-block;
+    margin-left: 10px;
+    border-radius: 8px;
+  }
+
+  .content-box-null {
+    background: #DDDDDD;
+    box-shadow: 0px 0px 0px 9px #DDDDDD;
+  }
+
+  .content {
+    white-space: pre-wrap;
+  }
+
+  .store-form {
+    width: 600px;
+  }
+
+  @media screen and (max-width: 560px) {
+    .store-form {
+      width: 90%;
+    }
+  }
+
+  @media screen and (max-width: 960px) {
+    .store-form {
+      width: 90%;
+    }
+  }
+
+
 </style>
 
 @endsection
@@ -115,10 +141,10 @@
 
   <hr width = "100%"><center>
   <p class="write" name="jumpto">書き込み</p>
-  <table border="0" width="640">
-    <tr>
-      <td colspan="2" width="100%">
-        <form action="/home/store" method="POST">
+  <!-- <table>
+    <tr> -->
+      <!-- <td colspan="2" width="100%"> -->
+        <form class="store-form" action="/home/store" method="POST">
         @csrf
             内容<br>
             <textarea name="content" id="textfield1" style="width: 100%; height: 80px;" requred></textarea>
@@ -130,9 +156,9 @@
         <script type="text/javascript">
         document.getElementById('textfield1').focus();
         </script>
-      </td>
+      <!-- </td>
     </tr>
-  </table>
+  </table> -->
   <hr width = "100%"></center>
 </div>
 @endsection
