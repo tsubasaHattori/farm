@@ -15,7 +15,8 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">名前</label>
                             <div class="col-md-6">
                                 <span class="">{{$user->name}}</span>
-                                <input type="hidden" name="email" value="{{$user->name}}">
+                                <input type="hidden" name="name" value="{{$user->name}}">
+                                <input type="hidden" name="email_token" value="{{$email_token}}">
                             </div>
                         </div>
 
@@ -27,7 +28,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
+                        <!-- <div class="form-group row">
                             <label for="birth" class="col-md-4 col-form-label text-md-right">生年月日</label>
                             <div class="col-md-6">
                                 <span class="">{{$user->birth_year}}年</span>
@@ -37,7 +38,7 @@
                                 <span class="">{{$user->birth_day}}日</span>
                                 <input type="hidden" name="birth_day" value="{{$user->birth_day}}">
                             </div>
-                        </div>
+                        </div> -->
 
 
                         <div class="form-group row mb-0">

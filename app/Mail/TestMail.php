@@ -31,6 +31,6 @@ class TestMail extends Mailable
         return $this
             ->from('example@example.com')
             ->subject('テスト送信完了')
-            ->view('emails.test');
+            ->view('auth.email.test');
     }
 }
