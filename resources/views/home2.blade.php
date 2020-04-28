@@ -2,6 +2,20 @@
 
 @section('style')
 <style>
+  .day-change-block {
+    text-align: center;
+    margin-top: 35px;
+  }
+
+  .day-change {
+    display: inline-block;
+    width: 100px;
+    font-size: 12px;
+    border-radius: 8px;
+    background: #8EB8FF;
+    box-shadow: 0px 0px 0px 5px #8EB8FF;
+  }
+
   .write {
     font-size: 25px;
   }
@@ -16,6 +30,11 @@
 
   .writer .fa{
     margin-right: 10px;
+  }
+
+  .time {
+    font-size: 12px;
+    opacity: 0.6;
   }
 
   .fa-trash {
@@ -77,7 +96,26 @@
     }
   }
 
+  textarea {
+    font-size: 16px;
+  }
 
+  .btn-square-shadow {
+    display: inline-block;
+    padding: 0.5em 1em;
+    text-decoration: none;
+    background: #668ad8;/*ボタン色*/
+    color: #FFF;
+    border-bottom: solid 4px #627295;
+    border-radius: 3px;
+  }
+  .btn-square-shadow:active {
+    /*ボタンを押したとき*/
+    -webkit-transform: translateY(4px);
+    transform: translateY(4px);/*下に動く*/
+    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);/*影を小さく*/
+    border-bottom: none;
+  }
 </style>
 
 @endsection
@@ -91,7 +129,6 @@
   function deleteMessage(formName, url, method)
   {
     if(!window.confirm('本当に削除しますか？')){
-      window.alert('キャンセルされました');
       return false;
     }
     // document.deleteform.submit();
@@ -111,9 +148,18 @@
 <div onload="Jump()" class="container">
   <hr width = "100%">
   <div class="messages-block">
-    @foreach ($messages as $message)
+    @foreach ($messages as $index => $message)
       <form name="deleteForm" action="/home/delete/{{$message['id']}}" method="POST">
       {{ csrf_field() }}
+        @if ($index == 0)
+          <div class="day-change-block">
+            <span class="day-change">{{ $message['created_at']->format('n/d (D)') }}</span>
+          </div>
+        @elseif ($index-1 >= 0 && $message['created_at']->day - $messages[$index-1]['created_at']->day)
+          <div class="day-change-block">
+            <span class="day-change">{{ $message['created_at']->format('n/d (D)') }}</span>
+          </div>
+        @endif
         <div @if($message['user_id'] == $user['id']) class="message my-message" @else class="message others-message" @endif>
           <div class="upper-line">
             <span class="writer">
@@ -122,6 +168,9 @@
               @endif
               {{ $message['name'] }}
             </span>
+          </div>
+          <div class="middle-line">
+            <span class="time">{{ $message['created_at']->format('G:i') }}</span>
           </div>
           <div class="content-line">
             @if ($message['is_deleted'])
@@ -141,24 +190,15 @@
 
   <hr width = "100%"><center>
   <p class="write" name="jumpto">書き込み</p>
-  <!-- <table>
-    <tr> -->
-      <!-- <td colspan="2" width="100%"> -->
-        <form class="store-form" action="/home/store" method="POST">
-        @csrf
-            内容<br>
-            <textarea name="content" id="textfield1" style="width: 100%; height: 80px;" requred></textarea>
-            <!-- <input type="text" name="content" size="50" id="textfield1" required><br> -->
-            <br>
-            <input type="submit" value="投稿" />
-          </font>
-        </form>
-        <script type="text/javascript">
-        document.getElementById('textfield1').focus();
-        </script>
-      <!-- </td>
-    </tr>
-  </table> -->
+  <form class="store-form" action="/home/store" method="POST">
+    @csrf
+    内容<br>
+    <textarea name="content" id="textfield1" style="width: 100%; height: 80px;" required></textarea><br>
+    <input class="btn btn-square-shadow" type="submit" value="投稿" />
+  </form>
+  <script type="text/javascript">
+  document.getElementById('textfield1').focus();
+  </script>
   <hr width = "100%"></center>
 </div>
 @endsection

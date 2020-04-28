@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Message;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
@@ -18,7 +19,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('verified');
+        $this->middleware('auth');
     }
 
     /**
@@ -27,9 +28,11 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getAction(Request $req) {
-        $user = json_decode(Auth::user(), true);
+        $user = Auth::user();
 
-        $messages = json_decode(DB::table('messages')->orderby('created_at', 'asc')->select('*')->get(), true);
+        $messages = Message::orderby('created_at', 'asc')->select('*')->get();
+
+        // var_dump(json_decode($messages));die;
 
         return view('home2', [
             'user'     => $user,
