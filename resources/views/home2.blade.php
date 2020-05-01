@@ -44,7 +44,7 @@
                 </span>
                 @else
                 <span class="content-box">
-                <span class="content" @click="scrollEnd">{{ $message['content'] }}</span>
+                <span class="content">{{ $message['content'] }}</span>
                 </span>
                 @endif
             </div>
