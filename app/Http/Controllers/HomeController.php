@@ -11,7 +11,7 @@ use Carbon\Carbon;
 
 
 class HomeController extends Controller
-{ 
+{
     /**
      * Create a new controller instance.
      *
@@ -30,9 +30,8 @@ class HomeController extends Controller
     public function getAction(Request $req) {
         $user = Auth::user();
 
-        $messages = Message::orderby('created_at', 'asc')->select('*')->get();
-
-        // var_dump(json_decode($messages));die;
+        $model = new Message();
+        $messages = $model->findExcludeDeactiveUsers();
 
         return view('home2', [
             'user'     => $user,

@@ -20,8 +20,7 @@
     <title>@yield('title', config('app.name'))</title>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
-    @yield('script')
+    @yield('header_script')
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -102,5 +101,8 @@
             @yield('content')
         </main>
     </div>
+
+<script src="{{ mix('js/app.js') }}"></script>
+@yield('footer_script')
 </body>
 </html>
