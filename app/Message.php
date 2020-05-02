@@ -25,6 +25,7 @@ class Message extends Model
             ->join('users as u', 'm.user_id', '=', 'u.id')
             ->where('u.status', '!=', 9)
             ->orderby('m.created_at', 'asc')
-            ->get();
+            ->get()
+            ->toArray();
     }
 }

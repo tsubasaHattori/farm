@@ -20,6 +20,7 @@
     <title>@yield('title', config('app.name'))</title>
 
     <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js" type="text/javascript"></script>
     @yield('header_script')
 
     <!-- Fonts -->

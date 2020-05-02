@@ -33,18 +33,23 @@ Route::get('/home', 'HomeController@getAction')->name('home');
 Route::post('/home/store', 'HomeController@store')->name('home.store');
 Route::post('/home/delete/{id}', 'HomeController@delete')->name('home.delete');
 
+// Route::prefix('api')->group(function() {
+    Route::get('/api/home/get-messages','HomeController@getMessages');
+    Route::post('/api/home/store-messages','HomeController@storeMessages');
+// });
+
 // Route::get('/home2', 'HomeController@index')->name('home2');
 
 
 Route::get('/board', 'HomeController@index')->name('board');
 
-Route::post('register/pre_check', 'Auth\RegisterController@pre_check')->name('register.pre_check');
+Route::post('/register/pre_check', 'Auth\RegisterController@pre_check')->name('register.pre_check');
 
-Route::post('register/main_check', 'Auth\RegisterController@mainCheck')->name('register.main.check');
+Route::post('/register/main_check', 'Auth\RegisterController@mainCheck')->name('register.main.check');
 
-Route::post('register/main_register', 'Auth\RegisterController@mainRegister')->name('register.main.registered');
+Route::post('/register/main_register', 'Auth\RegisterController@mainRegister')->name('register.main.registered');
 
-Route::get('register/verify/{token}', 'Auth\RegisterController@showForm');
+Route::get('/register/verify/{token}', 'Auth\RegisterController@showForm');
 
 
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Message;
+use App\User;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
@@ -28,14 +29,19 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function getAction(Request $req) {
-        $user = Auth::user();
+        $auth_user = Auth::user();
 
         $model = new Message();
         $messages = $model->findExcludeDeactiveUsers();
 
+        $model = new User();
+        $users = $model->get()->toArray();
+        $usersMap = array_column($users, null, 'id');
+
         return view('home2', [
-            'user'     => $user,
-            'messages' => $messages,
+            'messages'  => $messages,
+            'users'     => $usersMap,
+            'auth_user' => $auth_user,
         ]);
     }
 
@@ -62,5 +68,31 @@ class HomeController extends Controller
         ]);
 
         return redirect('home');
+    }
+
+    public function getMessages(Request $req) {
+        $model = new Message();
+        $messages = $model->findExcludeDeactiveUsers();
+
+        // var_dump(json_decode($messages));die;
+
+        return $messages;
+    }
+
+    public function storeMessages(Request $req) {
+        $user_id = $req->get('id');
+        $content = $req->get('content');
+
+        // var_dump($content);die;
+        $model = new Message();
+        $max_id = $model::max('id');
+
+        $model->insert([
+            'id'      => $max_id + 1,
+            'user_id' => $user_id,
+            'name'    => 'name',
+            'content' => $content,
+        ]);
+
     }
 }
