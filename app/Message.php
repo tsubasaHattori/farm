@@ -20,7 +20,7 @@ class Message extends Model
     public function findExcludeDeactiveUsers()
     {
         return $this
-            ->select('*')
+            ->select('m.*')
             ->from('messages as m')
             ->join('users as u', 'm.user_id', '=', 'u.id')
             ->where('u.status', '!=', 9)

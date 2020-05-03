@@ -1901,18 +1901,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   delimiters: ['${', '}'],
-  props: ['authUser', 'users'],
+  props: ['authUser', 'users', 'initialMessages'],
   data: function data() {
     return {
       content: "",
       isPosting: false,
-      messages: []
+      messages: this.initialMessages
     };
   },
   mounted: function mounted() {
-    this.$nextTick(function () {
-      // ビュー全体がレンダリングされた後にのみ実行されるコード
-      this.scrollEnd();
+    this.$nextTick(function () {// ビュー全体がレンダリングされた後にのみ実行されるコード
     });
     this.getMessages();
     setInterval(this.getMessages, 5000);
@@ -1921,37 +1919,46 @@ __webpack_require__.r(__webpack_exports__);
     getMessages: function getMessages() {
       var _this = this;
 
-      //←axios.getでデータを取得
-      var url = 'api/home/get-messages';
+      var url = 'api/message/get';
       axios.get(url).then(function (res) {
-        _this.messages = res.data; //取得したデータをitemsに格納
+        _this.messages = res.data.messages;
       })["catch"](function (error) {
         return console.log(error);
       });
     },
-    storeMessages: function storeMessages() {
+    storeMessage: function storeMessage() {
       var _this2 = this;
 
       this.isPosting = true;
-      var url = 'api/home/store-messages';
+      var url = 'api/message/store';
       axios.post(url, {
-        id: this.authUser.id,
+        user_id: this.authUser.id,
+        user_name: this.authUser.name,
         content: this.content
       }).then(function (res) {
         _this2.isPosting = false;
         _this2.content = "";
 
         _this2.getMessages();
-
-        _this2.scrollEnd();
       })["catch"](function (error) {
         return console.log(error);
       });
     },
-    scrollEnd: function scrollEnd() {
-      var elementHtml = document.documentElement;
-      var bottom = elementHtml.scrollHeight - elementHtml.clientHeight;
-      window.scrollTo(0, bottom);
+    deleteMessage: function deleteMessage(message) {
+      var _this3 = this;
+
+      if (!window.confirm('本当に削除しますか？')) {
+        return false;
+      }
+
+      var url = 'api/message/delete/' + message.id;
+      axios["delete"](url, {// content: message.content,
+      }).then(function (res) {
+        _this3.getMessages();
+      })["catch"](function (error) {
+        return console.log(error);
+      });
+      return true;
     }
   },
   filters: {
@@ -38365,11 +38372,7 @@ var render = function() {
                             attrs: { id: "trash" },
                             on: {
                               click: function($event) {
-                                return _vm.deleteMessage(
-                                  "deleteForm",
-                                  "/home/delete/{{ message.id }}",
-                                  "POST"
-                                )
+                                return _vm.deleteMessage(message)
                               }
                             }
                           })
@@ -38412,9 +38415,7 @@ var render = function() {
         [
           _c("hr", { attrs: { width: "100%" } }),
           _c("center", [
-            _c("p", { staticClass: "write", on: { click: _vm.scrollEnd } }, [
-              _vm._v("書き込み")
-            ]),
+            _c("p", { staticClass: "write" }, [_vm._v("書き込み")]),
             _vm._v(" "),
             _c("div", { staticClass: "store-form" }, [
               _vm._v("\n            内容"),
@@ -38450,7 +38451,7 @@ var render = function() {
                   value: "投稿",
                   disabled: _vm.isPosting || !_vm.content
                 },
-                on: { click: _vm.storeMessages }
+                on: { click: _vm.storeMessage }
               })
             ]),
             _vm._v(" "),

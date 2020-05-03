@@ -131,7 +131,7 @@ textarea {
             <div class="message" :class='[message.user_id == authUser.id ? "my-message" : "others-message"]'>
                 <div class="upper-line">
                     <span class="writer">
-                    <i v-if="!message.is_deleted && message.user_id == authUser.id" id="trash" class="fa fa-trash fa-lg" @click="deleteMessage('deleteForm', '/home/delete/{{ message.id }}', 'POST')"></i>
+                    <i v-if="!message.is_deleted && message.user_id == authUser.id" id="trash" class="fa fa-trash fa-lg" @click="deleteMessage(message)"></i>
                     {{ users[message.user_id].name }}
                     </span>
                 </div>
@@ -156,11 +156,11 @@ textarea {
 
     <div class="message-form">
         <hr width = "100%"><center>
-        <p class="write" @click="scrollEnd">書き込み</p>
+        <p class="write">書き込み</p>
         <div class="store-form">
             内容<br>
             <textarea v-model="content" name="content" style="width: 100%; height: 80px;" required></textarea><br>
-            <input @click="storeMessages" class="btn btn-square-shadow" type="submit" value="投稿" :disabled="isPosting || !content">
+            <input @click="storeMessage" class="btn btn-square-shadow" type="submit" value="投稿" :disabled="isPosting || !content">
         </div>
         <hr width = "100%"></center>
     </div>
@@ -173,18 +173,18 @@ textarea {
         props: [
             'authUser',
             'users',
+            'initialMessages',
         ],
         data: function () {
             return {
                 content: "",
                 isPosting: false,
-                messages: [],
+                messages: this.initialMessages,
             }
         },
         mounted: function() {
             this.$nextTick(function () {
                 // ビュー全体がレンダリングされた後にのみ実行されるコード
-                this.scrollEnd();
             });
 
             this.getMessages();
@@ -192,36 +192,48 @@ textarea {
             setInterval(this.getMessages, 5000);
         },
         methods: {
-            getMessages: function() { //←axios.getでデータを取得
-                var url = 'api/home/get-messages';
+            getMessages: function() {
+                var url = 'api/message/get';
                 axios.get(url)
                 .then((res)=>{
-                    this.messages = res.data; //取得したデータをitemsに格納
+                    this.messages = res.data.messages;
                 })
                 .catch(error => console.log(error))
             },
 
-            storeMessages: function() {
+            storeMessage: function() {
                 this.isPosting = true;
 
-                var url = 'api/home/store-messages';
+                var url = 'api/message/store';
                 axios.post(url, {
-                    id : this.authUser.id,
-                    content : this.content,
+                    user_id: this.authUser.id,
+                    user_name: this.authUser.name,
+                    content: this.content,
                 })
                 .then((res)=>{
                     this.isPosting = false;
                     this.content = "";
                     this.getMessages();
-                    this.scrollEnd();
                 })
                 .catch(error => console.log(error))
             },
 
-            scrollEnd: function() {
-                var elementHtml = document.documentElement;
-                var bottom = elementHtml.scrollHeight - elementHtml.clientHeight;
-                window.scrollTo(0, bottom);
+            deleteMessage: function(message) {
+                if (!window.confirm('本当に削除しますか？')) {
+                    return false;
+                }
+
+                var url = 'api/message/delete/' + message.id;
+                axios.delete(url, {
+                    // content: message.content,
+                })
+                .then((res)=>{
+                    this.getMessages();
+                })
+                .catch(error => console.log(error))
+
+
+                return true;
             },
         },
         filters: {

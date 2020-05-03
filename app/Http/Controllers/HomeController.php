@@ -45,54 +45,74 @@ class HomeController extends Controller
         ]);
     }
 
-    public function store(Request $req) {
-        $user = json_decode(Auth::user(), true);
+    // public function store(Request $req) {
+    //     $user = json_decode(Auth::user(), true);
 
-        $content = $req->content;
+    //     $content = $req->content;
 
-        DB::table('messages')->insert([
-            'user_id' => $user['id'],
-            'name'    => $user['name'],
-            'content' => $content,
-        ]);
+    //     DB::table('messages')->insert([
+    //         'user_id' => $user['id'],
+    //         'name'    => $user['name'],
+    //         'content' => $content,
+    //     ]);
 
-        return redirect('home');
-    }
+    //     return redirect('home');
+    // }
 
-    public function delete(Request $req) {
-        $message_id = $req->id;
+    // public function delete(Request $req) {
+    //     $message_id = $req->id;
 
-        DB::table('messages')->where('id', '=', $message_id)->update([
-            'is_deleted' => true,
-            'deleted_at' => Carbon::now(),
-        ]);
+    //     DB::table('messages')->where('id', '=', $message_id)->update([
+    //         'is_deleted' => true,
+    //         'deleted_at' => Carbon::now(),
+    //     ]);
 
-        return redirect('home');
-    }
+    //     return redirect('home');
+    // }
 
-    public function getMessages(Request $req) {
+    public function getListAction(Request $req) {
         $model = new Message();
         $messages = $model->findExcludeDeactiveUsers();
 
         // var_dump(json_decode($messages));die;
 
-        return $messages;
+        return [
+            'messages' => $messages,
+        ];
     }
 
-    public function storeMessages(Request $req) {
-        $user_id = $req->get('id');
+    public function store(Request $req) {
+        $user_id = $req->get('user_id');
+        $user_name = $req->get('user_name');
         $content = $req->get('content');
 
-        // var_dump($content);die;
         $model = new Message();
         $max_id = $model::max('id');
 
         $model->insert([
             'id'      => $max_id + 1,
             'user_id' => $user_id,
-            'name'    => 'name',
+            'name'    => $user_name,
             'content' => $content,
         ]);
 
+        return [
+            'user_id'   => $user_id,
+            'user_name' => $user_name,
+            'content'   => $content,
+        ];
+    }
+
+    public function destroy(Request $req) {
+        $message_id = $req->message_id;
+        $content = $req->get('content');
+
+        $model = new Message();
+        $model->destroy($message_id);
+
+        return [
+            'message_id' => $message_id,
+            'content'    => $content,
+        ];
     }
 }
