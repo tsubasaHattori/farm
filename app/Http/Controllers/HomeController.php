@@ -108,7 +108,8 @@ class HomeController extends Controller
         $content = $req->get('content');
 
         $model = new Message();
-        $model->destroy($message_id);
+        $model->deleteMessage($message_id);
+        // $model->destroy($message_id);
 
         return [
             'message_id' => $message_id,

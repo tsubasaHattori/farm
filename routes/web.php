@@ -34,7 +34,7 @@ Route::get('/home', 'HomeController@getAction')->name('home');
 // Route::prefix('api')->group(function() {
     Route::get('/api/message/get','HomeController@getListAction');
     Route::post('/api/message/store','HomeController@store');
-    Route::delete('/api/message/delete/{message_id}','HomeController@destroy');
+    Route::post('/api/message/delete/{message_id}','HomeController@destroy');
 
 // });
 

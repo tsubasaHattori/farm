@@ -119,15 +119,14 @@ textarea {
 <div>
     <div v-for="(message, index) in messages" :key="index" class="messages-block">
         <form name="deleteForm" action="/home/delete/message.id" method="POST">
-            <!-- @if ($index == 0)
-            <div v-if="index == 0" class="day-change-block">
-                <span class="day-change">{{ $message['created_at']->format('n/d (D)') }}</span>
+            <div class="day-change-line">
+                <div v-if="index == 0" class="day-change-block">
+                    <span class="day-change">{{ message.created_at | moment("MM/DD (ddd)") }}</span>
+                </div>
+                <div v-if="index-1 >= 0 && $moment(message.created_at).date() - $moment(messages[index-1].created_at).date() > 0" class="day-change-block">
+                    <span class="day-change">{{ message.created_at | moment("MM/DD (ddd)") }}</span>
+                </div>
             </div>
-            @elseif ($index-1 >= 0 && $message['created_at']->day - $messages[$index-1]['created_at']->day)
-            <div class="day-change-block">
-                <span class="day-change">{{ $message['created_at']->format('n/d (D)') }}</span>
-            </div>
-            @endif -->
             <div class="message" :class='[message.user_id == authUser.id ? "my-message" : "others-message"]'>
                 <div class="upper-line">
                     <span class="writer">
@@ -136,7 +135,7 @@ textarea {
                     </span>
                 </div>
                 <div class="middle-line">
-                    <span class="time">{{ message.created_at | moment }}</span>
+                    <span class="time">{{ message.created_at | moment("HH:mm") }}</span>
                 </div>
                 <div class="content-line">
                     <div v-if="message.is_deleted">
@@ -224,22 +223,21 @@ textarea {
                 }
 
                 var url = 'api/message/delete/' + message.id;
-                axios.delete(url, {
-                    // content: message.content,
+                axios.post(url, {
+                    content: message.content,
                 })
                 .then((res)=>{
                     this.getMessages();
                 })
                 .catch(error => console.log(error))
 
-
                 return true;
             },
         },
         filters: {
-            moment: function (date) {
-                return moment(date).format("HH:mm");// eslint-disable-line
-            }
+            // moment: function (date) {
+            //     return moment(date).format("HH:mm");// eslint-disable-line
+            // }
         }
     }
 </script>

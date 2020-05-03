@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Message extends Model
@@ -27,5 +28,17 @@ class Message extends Model
             ->orderby('m.created_at', 'asc')
             ->get()
             ->toArray();
+    }
+
+    public function deleteMessage($message_id)
+    {
+        $now = Carbon::now();
+
+        $this->from('messages as m')
+            ->where('m.id', $message_id)
+            ->update([
+                'is_deleted' => true,
+                'deleted_at' => $now,
+            ]);
     }
 }
