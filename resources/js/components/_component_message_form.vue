@@ -84,6 +84,11 @@
     box-shadow: 0px 0px 0px 5px #D7EEFF;
 }
 
+.reply-line .reply-content-box-null {
+    background: #DDDDDD;
+    box-shadow: 0px 0px 0px 5px #DDDDDD;
+}
+
 .reply-line .writer {
     font-size: 10px;
 }
@@ -213,7 +218,7 @@ textarea {
                         </span>
                     </div>
                 </div>
-                <div v-if="message.reply_message_id" class="reply-line">
+                <div v-if="message.reply_message_id && !message.is_deleted" class="reply-line">
                     <div class="upper-line">
                         <span class="writer">
                             <i v-if="message.user_id != authUser.id" class="fa fa-reply fa-rotate-180" style="margin-right: 0px" aria-hidden="true"></i>
@@ -222,7 +227,7 @@ textarea {
                         </span>
                     </div>
                     <div class="content-line reply-content-line">
-                        <div v-if="message.is_deleted">
+                        <div v-if="messageMap[message.reply_message_id].is_deleted">
                             <span class="content-box-null reply-content-box-null">
                                 <span class="reply-content">メッセージが削除されました</span>
                             </span>
