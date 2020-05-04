@@ -2048,8 +2048,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (res) {
         _this2.isPosting = false;
         _this2.content = "";
-
-        _this2.getMessages(true);
+        _this2.replyMessageId = null, _this2.getMessages(true);
       })["catch"](function (error) {
         return console.log(error);
       });

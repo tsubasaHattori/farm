@@ -323,7 +323,9 @@ textarea {
                 .then((res)=>{
                     this.isPosting = false;
                     this.content = "";
+                    this.replyMessageId = null,
                     this.getMessages(true);
+
                 })
                 .catch(error => console.log(error))
             },
