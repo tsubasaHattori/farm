@@ -10,11 +10,18 @@
     font-size: 12px;
     border-radius: 8px;
     background: #8EB8FF;
-    box-shadow: 0px 0px 0px 5px #8EB8FF;
+    box-shadow: 0px
+     0px 0px 5px #8EB8FF;
+}
+
+.write-block {
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 .write {
     font-size: 25px;
+    background: linear-gradient(transparent 70%, #a7d6ff 70%);
 }
 
 .message {
@@ -37,6 +44,48 @@
 .fa-trash {
     cursor: pointer;
     color: #CC3333;
+}
+
+.fa-remove {
+    cursor: pointer;
+    color: #CC3333;
+}
+
+.fa-comment {
+    color: #20B2AA;
+    cursor: pointer;
+}
+
+.reply-content {
+    font-size: 8px;
+    white-space: pre-wrap;
+    cursor: text;
+}
+
+.my-message .reply-line .content-line {
+    width: 50%;
+    text-align: right;
+    margin: 0.1em 0 0.1em auto;
+}
+
+.my-message .reply-line .content-box {
+    background: #D7EEFF;
+    box-shadow: 0px 0px 0px 5px #D7EEFF;
+    text-align: left;
+}
+
+.others-message .reply-line .content-line {
+    width: 50%;
+    margin: 0.1em 0 0.1em 0;
+}
+
+.others-message .reply-line .content-box {
+    background: #D7EEFF;
+    box-shadow: 0px 0px 0px 5px #D7EEFF;
+}
+
+.reply-line .writer {
+    font-size: 10px;
 }
 
 .my-message .content-line {
@@ -75,21 +124,34 @@
 
 .content {
     white-space: pre-wrap;
+    cursor: text;
 }
 
 .store-form {
     width: 500px;
 }
 
+.reply-preview {
+    margin-left: 20%;
+}
+
 @media screen and (max-width: 560px) {
     .store-form {
         width: 90%;
+    }
+
+    .reply-preview {
+        margin-left: 0;
     }
 }
 
 @media screen and (max-width: 960px) {
     store-form {
         width: 80%;
+    }
+
+    .reply-preview {
+        margin-left: 0;
     }
 }
 
@@ -121,17 +183,19 @@ textarea {
         <form name="deleteForm" action="/home/delete/message.id" method="POST">
             <div class="day-change-line">
                 <div v-if="index == 0" class="day-change-block">
-                    <span class="day-change">{{ message.created_at | moment("MM/DD (ddd)") }}</span>
+                    <span class="day-change">{{ message.created_at | moment("M/D (ddd)") }}</span>
                 </div>
-                <div v-if="index-1 >= 0 && $moment(message.created_at).date() - $moment(messages[index-1].created_at).date() > 0" class="day-change-block">
-                    <span class="day-change">{{ message.created_at | moment("MM/DD (ddd)") }}</span>
+                <div v-if="index-1 > 0 && $moment(message.created_at).date() - $moment(messages[index-1].created_at).date() > 0" class="day-change-block">
+                    <span class="day-change">{{ message.created_at | moment("M/D (ddd)") }}</span>
                 </div>
             </div>
             <div class="message" :class='[message.user_id == authUser.id ? "my-message" : "others-message"]'>
                 <div class="upper-line">
                     <span class="writer">
                     <i v-if="!message.is_deleted && message.user_id == authUser.id" id="trash" class="fa fa-trash fa-lg" @click="deleteMessage(message)"></i>
+                    <i v-if="!message.is_deleted && message.user_id == authUser.id" class="fa fa-comment fa-lg" style="margin-right: 3px;" @click="reply(message)"></i>
                     {{ users[message.user_id].name }}
+                    <i v-if="!message.is_deleted && message.user_id != authUser.id" class="fa fa-comment fa-lg" style="margin-left: 4px;" @click="reply(message)"></i>
                     </span>
                 </div>
                 <div class="middle-line">
@@ -149,13 +213,48 @@ textarea {
                         </span>
                     </div>
                 </div>
+                <div v-if="message.reply_message_id" class="reply-line">
+                    <div class="upper-line">
+                        <span class="writer">
+                            <i v-if="message.user_id != authUser.id" class="fa fa-reply fa-rotate-180" style="margin-right: 0px" aria-hidden="true"></i>
+                            {{ messageMap[message.reply_message_id].name }}
+                            <i v-if="message.user_id == authUser.id" class="fa fa-reply fa-flip-vertical" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <div class="content-line reply-content-line">
+                        <div v-if="message.is_deleted">
+                            <span class="content-box-null reply-content-box-null">
+                                <span class="reply-content">メッセージが削除されました</span>
+                            </span>
+                        </div>
+                        <div v-else>
+                            <span class="content-box reply-content-box">
+                                <span class="content reply-content">{{ messageMap[message.reply_message_id].content }}</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
 
     <div class="message-form">
-        <hr width = "100%"><center>
-        <p class="write">書き込み</p>
+        <hr width = "100%">
+        <div class="write-block">
+            <span class="write">書き込み</span>
+        </div>
+        <div v-if="replyMessageId" class="reply-block">
+            <div class="reply-preview">
+                <div class="message others-message" style="margin-top: 0">
+                <span><i class="fa fa-remove fa-lg" @click="replyMessageId=null"></i> <span style="font-weight: bold;">リプライ : </span> {{ messageMap[replyMessageId].name }}</span>
+                    <div class="content-line">
+                        <span class="content-box-null">
+                            <span class="content">{{ messageMap[replyMessageId].content }}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div><center>
         <div class="store-form">
             内容<br>
             <textarea v-model="content" name="content" style="width: 100%; height: 80px;" required></textarea><br>
@@ -173,12 +272,15 @@ textarea {
             'authUser',
             'users',
             'initialMessages',
+            'initialMessageMap',
         ],
         data: function () {
             return {
                 content: "",
                 isPosting: false,
                 messages: this.initialMessages,
+                messageMap: this.initialMessageMap,
+                replyMessageId: null,
             }
         },
         mounted: function() {
@@ -191,11 +293,19 @@ textarea {
             setInterval(this.getMessages, 5000);
         },
         methods: {
-            getMessages: function() {
+            getMessages: function(scroll = false) {
+                var self = this;
                 var url = 'api/message/get';
                 axios.get(url)
                 .then((res)=>{
                     this.messages = res.data.messages;
+                    this.messageMap = res.data.messageMap;
+
+                    if (scroll) {
+                        setTimeout(function() {
+                            self.$emit('store');
+                        }, 0);
+                    }
                 })
                 .catch(error => console.log(error))
             },
@@ -208,11 +318,12 @@ textarea {
                     user_id: this.authUser.id,
                     user_name: this.authUser.name,
                     content: this.content,
+                    reply_message_id : this.replyMessageId,
                 })
                 .then((res)=>{
                     this.isPosting = false;
                     this.content = "";
-                    this.getMessages();
+                    this.getMessages(true);
                 })
                 .catch(error => console.log(error))
             },
@@ -233,6 +344,11 @@ textarea {
 
                 return true;
             },
+
+            reply: function(message) {
+                this.replyMessageId = message.id;
+                this.$emit('store');
+            }
         },
         filters: {
             // moment: function (date) {

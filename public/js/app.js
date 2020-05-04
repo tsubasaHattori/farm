@@ -1898,14 +1898,115 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   delimiters: ['${', '}'],
-  props: ['authUser', 'users', 'initialMessages'],
+  props: ['authUser', 'users', 'initialMessages', 'initialMessageMap'],
   data: function data() {
     return {
       content: "",
       isPosting: false,
-      messages: this.initialMessages
+      messages: this.initialMessages,
+      messageMap: this.initialMessageMap,
+      replyMessageId: null
     };
   },
   mounted: function mounted() {
@@ -1918,9 +2019,18 @@ __webpack_require__.r(__webpack_exports__);
     getMessages: function getMessages() {
       var _this = this;
 
+      var scroll = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var self = this;
       var url = 'api/message/get';
       axios.get(url).then(function (res) {
         _this.messages = res.data.messages;
+        _this.messageMap = res.data.messageMap;
+
+        if (scroll) {
+          setTimeout(function () {
+            self.$emit('store');
+          }, 0);
+        }
       })["catch"](function (error) {
         return console.log(error);
       });
@@ -1933,12 +2043,13 @@ __webpack_require__.r(__webpack_exports__);
       axios.post(url, {
         user_id: this.authUser.id,
         user_name: this.authUser.name,
-        content: this.content
+        content: this.content,
+        reply_message_id: this.replyMessageId
       }).then(function (res) {
         _this2.isPosting = false;
         _this2.content = "";
 
-        _this2.getMessages();
+        _this2.getMessages(true);
       })["catch"](function (error) {
         return console.log(error);
       });
@@ -1959,6 +2070,10 @@ __webpack_require__.r(__webpack_exports__);
         return console.log(error);
       });
       return true;
+    },
+    reply: function reply(message) {
+      this.replyMessageId = message.id;
+      this.$emit('store');
     }
   },
   filters: {// moment: function (date) {
@@ -6512,7 +6627,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.day-change-block {\n    text-align: center;\n    margin-top: 35px;\n}\n.day-change {\n    display: inline-block;\n    width: 100px;\n    font-size: 12px;\n    border-radius: 8px;\n    background: #8EB8FF;\n    box-shadow: 0px 0px 0px 5px #8EB8FF;\n}\n.write {\n    font-size: 25px;\n}\n.message {\n    margin-top: 30px;\n}\n.my-message {\n    text-align: right;\n}\n.writer .fa{\n    margin-right: 10px;\n}\n.time {\n    font-size: 12px;\n    opacity: 0.6;\n}\n.fa-trash {\n    cursor: pointer;\n    color: #CC3333;\n}\n.my-message .content-line {\n    width: 70%;\n    text-align: right;\n    margin: 1em 0 1em auto;\n}\n.my-message .content-box {\n    background: #66FF99;\n    box-shadow: 0px 0px 0px 9px #66FF99;\n    text-align: left;\n}\n.others-message .content-line {\n    width: 70%;\n    margin: 1em 0 1em 0;\n}\n.others-message .content-box {\n    background: #ffeaea;\n    box-shadow: 0px 0px 0px 9px #ffeaea;\n}\n.content-box, .content-box-null {\n    color: #565656;\n    display: inline-block;\n    margin-left: 10px;\n    border-radius: 8px;\n}\n.content-box-null {\n    background: #DDDDDD;\n    box-shadow: 0px 0px 0px 9px #DDDDDD;\n}\n.content {\n    white-space: pre-wrap;\n}\n.store-form {\n    width: 500px;\n}\n@media screen and (max-width: 560px) {\n.store-form {\n        width: 90%;\n}\n}\n@media screen and (max-width: 960px) {\nstore-form {\n        width: 80%;\n}\n}\ntextarea {\n    font-size: 16px;\n}\n.btn-square-shadow {\n    display: inline-block;\n    padding: 0.5em 1em;\n    text-decoration: none;\n    background: #fd9535;/*ボタン色*/\n    color: #FFF;\n    border-bottom: solid 4px #627295;\n    border-radius: 3px;\n}\n.btn-square-shadow:active {\n    /*ボタンを押したとき*/\n    transform: translateY(4px);/*下に動く*/\n    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);/*影を小さく*/\n    border-bottom: none;\n}\n", ""]);
+exports.push([module.i, "\n.day-change-block {\n    text-align: center;\n    margin-top: 35px;\n}\n.day-change {\n    display: inline-block;\n    width: 100px;\n    font-size: 12px;\n    border-radius: 8px;\n    background: #8EB8FF;\n    box-shadow: 0px\n     0px 0px 5px #8EB8FF;\n}\n.write-block {\n    text-align: center;\n    margin-bottom: 10px;\n}\n.write {\n    font-size: 25px;\n    background: linear-gradient(transparent 70%, #a7d6ff 70%);\n}\n.message {\n    margin-top: 30px;\n}\n.my-message {\n    text-align: right;\n}\n.writer .fa{\n    margin-right: 10px;\n}\n.time {\n    font-size: 12px;\n    opacity: 0.6;\n}\n.fa-trash {\n    cursor: pointer;\n    color: #CC3333;\n}\n.fa-remove {\n    cursor: pointer;\n    color: #CC3333;\n}\n.fa-comment {\n    color: #20B2AA;\n    cursor: pointer;\n}\n.reply-content {\n    font-size: 8px;\n    white-space: pre-wrap;\n    cursor: text;\n}\n.my-message .reply-line .content-line {\n    width: 50%;\n    text-align: right;\n    margin: 0.1em 0 0.1em auto;\n}\n.my-message .reply-line .content-box {\n    background: #D7EEFF;\n    box-shadow: 0px 0px 0px 5px #D7EEFF;\n    text-align: left;\n}\n.others-message .reply-line .content-line {\n    width: 50%;\n    margin: 0.1em 0 0.1em 0;\n}\n.others-message .reply-line .content-box {\n    background: #D7EEFF;\n    box-shadow: 0px 0px 0px 5px #D7EEFF;\n}\n.reply-line .writer {\n    font-size: 10px;\n}\n.my-message .content-line {\n    width: 70%;\n    text-align: right;\n    margin: 1em 0 1em auto;\n}\n.my-message .content-box {\n    background: #66FF99;\n    box-shadow: 0px 0px 0px 9px #66FF99;\n    text-align: left;\n}\n.others-message .content-line {\n    width: 70%;\n    margin: 1em 0 1em 0;\n}\n.others-message .content-box {\n    background: #ffeaea;\n    box-shadow: 0px 0px 0px 9px #ffeaea;\n}\n.content-box, .content-box-null {\n    color: #565656;\n    display: inline-block;\n    margin-left: 10px;\n    border-radius: 8px;\n}\n.content-box-null {\n    background: #DDDDDD;\n    box-shadow: 0px 0px 0px 9px #DDDDDD;\n}\n.content {\n    white-space: pre-wrap;\n    cursor: text;\n}\n.store-form {\n    width: 500px;\n}\n.reply-preview {\n    margin-left: 20%;\n}\n@media screen and (max-width: 560px) {\n.store-form {\n        width: 90%;\n}\n.reply-preview {\n        margin-left: 0;\n}\n}\n@media screen and (max-width: 960px) {\nstore-form {\n        width: 80%;\n}\n.reply-preview {\n        margin-left: 0;\n}\n}\ntextarea {\n    font-size: 16px;\n}\n.btn-square-shadow {\n    display: inline-block;\n    padding: 0.5em 1em;\n    text-decoration: none;\n    background: #fd9535;/*ボタン色*/\n    color: #FFF;\n    border-bottom: solid 4px #627295;\n    border-radius: 3px;\n}\n.btn-square-shadow:active {\n    /*ボタンを押したとき*/\n    transform: translateY(4px);/*下に動く*/\n    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);/*影を小さく*/\n    border-bottom: none;\n}\n", ""]);
 
 // exports
 
@@ -38348,14 +38463,14 @@ var render = function() {
                       _c("span", { staticClass: "day-change" }, [
                         _vm._v(
                           _vm._s(
-                            _vm._f("moment")(message.created_at, "MM/DD (ddd)")
+                            _vm._f("moment")(message.created_at, "M/D (ddd)")
                           )
                         )
                       ])
                     ])
                   : _vm._e(),
                 _vm._v(" "),
-                index - 1 >= 0 &&
+                index - 1 > 0 &&
                 _vm.$moment(message.created_at).date() -
                   _vm.$moment(_vm.messages[index - 1].created_at).date() >
                   0
@@ -38363,7 +38478,7 @@ var render = function() {
                       _c("span", { staticClass: "day-change" }, [
                         _vm._v(
                           _vm._s(
-                            _vm._f("moment")(message.created_at, "MM/DD (ddd)")
+                            _vm._f("moment")(message.created_at, "M/D (ddd)")
                           )
                         )
                       ])
@@ -38395,11 +38510,34 @@ var render = function() {
                             }
                           })
                         : _vm._e(),
+                      _vm._v(" "),
+                      !message.is_deleted && message.user_id == _vm.authUser.id
+                        ? _c("i", {
+                            staticClass: "fa fa-comment fa-lg",
+                            staticStyle: { "margin-right": "3px" },
+                            on: {
+                              click: function($event) {
+                                return _vm.reply(message)
+                              }
+                            }
+                          })
+                        : _vm._e(),
                       _vm._v(
                         "\n                    " +
                           _vm._s(_vm.users[message.user_id].name) +
                           "\n                    "
-                      )
+                      ),
+                      !message.is_deleted && message.user_id != _vm.authUser.id
+                        ? _c("i", {
+                            staticClass: "fa fa-comment fa-lg",
+                            staticStyle: { "margin-left": "4px" },
+                            on: {
+                              click: function($event) {
+                                return _vm.reply(message)
+                              }
+                            }
+                          })
+                        : _vm._e()
                     ])
                   ]),
                   _vm._v(" "),
@@ -38421,7 +38559,71 @@ var render = function() {
                             ])
                           ])
                         ])
-                  ])
+                  ]),
+                  _vm._v(" "),
+                  message.reply_message_id
+                    ? _c("div", { staticClass: "reply-line" }, [
+                        _c("div", { staticClass: "upper-line" }, [
+                          _c("span", { staticClass: "writer" }, [
+                            message.user_id != _vm.authUser.id
+                              ? _c("i", {
+                                  staticClass: "fa fa-reply fa-rotate-180",
+                                  staticStyle: { "margin-right": "0px" },
+                                  attrs: { "aria-hidden": "true" }
+                                })
+                              : _vm._e(),
+                            _vm._v(
+                              "\n                            " +
+                                _vm._s(
+                                  _vm.messageMap[message.reply_message_id].name
+                                ) +
+                                "\n                            "
+                            ),
+                            message.user_id == _vm.authUser.id
+                              ? _c("i", {
+                                  staticClass: "fa fa-reply fa-flip-vertical",
+                                  attrs: { "aria-hidden": "true" }
+                                })
+                              : _vm._e()
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "content-line reply-content-line" },
+                          [
+                            message.is_deleted
+                              ? _c("div", [_vm._m(1, true)])
+                              : _c("div", [
+                                  _c(
+                                    "span",
+                                    {
+                                      staticClass:
+                                        "content-box reply-content-box"
+                                    },
+                                    [
+                                      _c(
+                                        "span",
+                                        {
+                                          staticClass: "content reply-content"
+                                        },
+                                        [
+                                          _vm._v(
+                                            _vm._s(
+                                              _vm.messageMap[
+                                                message.reply_message_id
+                                              ].content
+                                            )
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ])
+                          ]
+                        )
+                      ])
+                    : _vm._e()
                 ]
               )
             ]
@@ -38434,9 +38636,52 @@ var render = function() {
         { staticClass: "message-form" },
         [
           _c("hr", { attrs: { width: "100%" } }),
+          _vm._v(" "),
+          _vm._m(2),
+          _vm._v(" "),
+          _vm.replyMessageId
+            ? _c("div", { staticClass: "reply-block" }, [
+                _c("div", { staticClass: "reply-preview" }, [
+                  _c(
+                    "div",
+                    {
+                      staticClass: "message others-message",
+                      staticStyle: { "margin-top": "0" }
+                    },
+                    [
+                      _c("span", [
+                        _c("i", {
+                          staticClass: "fa fa-remove fa-lg",
+                          on: {
+                            click: function($event) {
+                              _vm.replyMessageId = null
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("span", { staticStyle: { "font-weight": "bold" } }, [
+                          _vm._v("リプライ : ")
+                        ]),
+                        _vm._v(
+                          " " + _vm._s(_vm.messageMap[_vm.replyMessageId].name)
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "content-line" }, [
+                        _c("span", { staticClass: "content-box-null" }, [
+                          _c("span", { staticClass: "content" }, [
+                            _vm._v(
+                              _vm._s(_vm.messageMap[_vm.replyMessageId].content)
+                            )
+                          ])
+                        ])
+                      ])
+                    ]
+                  )
+                ])
+              ])
+            : _vm._e(),
           _c("center", [
-            _c("p", { staticClass: "write" }, [_vm._v("書き込み")]),
-            _vm._v(" "),
             _c("div", { staticClass: "store-form" }, [
               _vm._v("\n            内容"),
               _c("br"),
@@ -38493,6 +38738,28 @@ var staticRenderFns = [
       _c("span", { staticClass: "content" }, [
         _vm._v("メッセージが削除されました")
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "span",
+      { staticClass: "content-box-null reply-content-box-null" },
+      [
+        _c("span", { staticClass: "reply-content" }, [
+          _vm._v("メッセージが削除されました")
+        ])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "write-block" }, [
+      _c("span", { staticClass: "write" }, [_vm._v("書き込み")])
     ])
   }
 ]

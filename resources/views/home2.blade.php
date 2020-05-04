@@ -6,6 +6,14 @@
 @endsection
 
 @section('header_script')
+<style>
+    .scroll-button {
+        position: fixed;
+        right: 20px;
+        bottom: 60px;
+        opacity: 0.7;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -13,8 +21,12 @@
     <component-message-form
         :auth-user = authUser
         :users = users
-        :initial-messages = messages>
+        :initial-messages = messages
+        :initial-message-map = messageMap
+        @store="scrollEnd">
     </component-message-form>
+
+    <button @click="scrollEnd" class="scroll-button"><i class="fa fa-arrow-down"></i>
 </div>
 @endsection
 
@@ -26,6 +38,7 @@ var home = new Vue({
     data: {
         authUser: @json($auth_user),
         messages: @json($messages),
+        messageMap: @json($messageMap),
         users: @json($users),
     },
     mounted: function() {

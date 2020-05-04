@@ -33,15 +33,17 @@ class HomeController extends Controller
 
         $model = new Message();
         $messages = $model->findExcludeDeactiveUsers();
+        $messageMap = array_column($messages, null, 'id');
 
         $model = new User();
         $users = $model->get()->toArray();
-        $usersMap = array_column($users, null, 'id');
+        $userMap = array_column($users, null, 'id');
 
         return view('home2', [
-            'messages'  => $messages,
-            'users'     => $usersMap,
-            'auth_user' => $auth_user,
+            'messages'   => $messages,
+            'messageMap' => $messageMap,
+            'users'      => $userMap,
+            'auth_user'  => $auth_user,
         ]);
     }
 
@@ -73,11 +75,14 @@ class HomeController extends Controller
     public function getListAction(Request $req) {
         $model = new Message();
         $messages = $model->findExcludeDeactiveUsers();
+        $messageMap = array_column($messages, null, 'id');
+
 
         // var_dump(json_decode($messages));die;
 
         return [
             'messages' => $messages,
+            'messageMap' => $messageMap,
         ];
     }
 
@@ -85,21 +90,25 @@ class HomeController extends Controller
         $user_id = $req->get('user_id');
         $user_name = $req->get('user_name');
         $content = $req->get('content');
+        $reply_message_id = $req->get('reply_message_id');
 
         $model = new Message();
         $max_id = $model::max('id');
 
         $model->insert([
-            'id'      => $max_id + 1,
-            'user_id' => $user_id,
-            'name'    => $user_name,
-            'content' => $content,
+            'id'               => $max_id + 1,
+            'user_id'          => $user_id,
+            'name'             => $user_name,
+            'content'          => $content,
+            'reply_message_id' => $reply_message_id,
         ]);
 
         return [
-            'user_id'   => $user_id,
-            'user_name' => $user_name,
-            'content'   => $content,
+            'id'               => $max_id + 1,
+            'user_id'          => $user_id,
+            'user_name'        => $user_name,
+            'content'          => $content,
+            'reply_message_id' => $reply_message_id,
         ];
     }
 
