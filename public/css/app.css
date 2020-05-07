@@ -10945,7 +10945,11 @@ a.text-dark:focus {
   border: 1px solid #DDDDDD;
 }
 
-.nav-toggel-items li,
+.nav-toggle-items {
+  margin-bottom: 0;
+}
+
+.nav-toggle-items li a,
 .dropdown-item {
   color: rgba(0, 0, 0, 0.5);
 }

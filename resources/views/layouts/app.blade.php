@@ -55,7 +55,7 @@
                 </span>
 
                 <div class="nav-toggle-container hidden">
-                    <ul class="nav-toggel-items">
+                    <ul class="nav-toggle-items">
                         <li>
                             <a class="dropdown-item">
                                 プロフィール編集
