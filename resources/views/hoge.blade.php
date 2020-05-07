@@ -1,4 +1,6 @@
-<!doctype html>
+@extends('layouts.app')
+
+<!-- <!doctype html>
 <html lang="{{ app()->getLocale() }}">
     <head>
         <meta charset="utf-8">
@@ -7,7 +9,8 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <title>Hoge</title>
     </head>
-    <body>
+    <body> -->
+    @section('content')
       <div align="center"><center>
         <table border="0" width="640">
           <tr>
@@ -74,5 +77,6 @@
             </table>
         <br>
       </center></div>
-    </body>
-</html>
+    @endsection
+    <!-- </body>
+</html> -->
