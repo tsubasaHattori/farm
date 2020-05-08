@@ -36,7 +36,7 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+        <nav class="navbar navbar-light navbar-laravel">
             <a class="nav-app-name" href="{{ url('/') }}">
                 {{ config('app.name') }}
             </a>
@@ -50,7 +50,7 @@
                     </li>
                 </ul>
             @else
-                <span class="navbar-toggler">
+                <span class="nav-toggler">
                     {{ Auth::user()->name }}<i class="fa fa-caret-down"></i>
                 </span>
 

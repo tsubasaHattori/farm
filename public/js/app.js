@@ -55774,17 +55774,16 @@ Vue.component('component-message-form', __webpack_require__(/*! ./components/_co
 //     el: '#app'
 // });
 
-$('.navbar-toggler').click(function () {
-  console.log('クリックされました！');
+$('.nav-toggler').click(function () {
   $('.nav-toggle-container').toggleClass('hidden');
 });
 $(function () {
   // ナビの範囲外のどこかをクリックしたときに発動
   $('#app').on('click', function () {
-    if (!$(event.target).closest('.nav-toggle-container').length && !$(event.target).closest('.navbar-toggler').length) {
+    if (!$(event.target).closest('.nav-toggle-container').length && !$(event.target).closest('.nav-toggler').length) {
       if ($('.nav-toggle-container').is(':visible')) {
         // ナビが表示されていたらcloseを実行
-        $('.navbar-toggler').trigger('click');
+        $('.nav-toggler').trigger('click');
       } else {
         // ナビが非表示の場合は起動しない
         event.stopPropagation();
