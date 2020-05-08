@@ -2018,7 +2018,7 @@ __webpack_require__.r(__webpack_exports__);
     this.$nextTick(function () {// ビュー全体がレンダリングされた後にのみ実行されるコード
     });
     this.getMessages();
-    setInterval(this.getMessages, 5000);
+    setInterval(this.getMessages, 3000);
   },
   methods: {
     getMessages: function getMessages() {

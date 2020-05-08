@@ -295,7 +295,7 @@ textarea {
 
             this.getMessages();
 
-            setInterval(this.getMessages, 5000);
+            setInterval(this.getMessages, 3000);
         },
         methods: {
             getMessages: function(scroll = false) {
