@@ -52,6 +52,11 @@
     opacity: 0.6;
 }
 
+.is-edited {
+    font-size: 12px;
+    opacity: 0.6;
+}
+
 .fa-trash {
     cursor: pointer;
     color: #CC3333;
@@ -220,6 +225,7 @@ textarea {
                 </div>
                 <div class="middle-line">
                     <i v-if="!message.is_deleted && message.user_id == authUser.id" class="fa fa-edit" @click="edit(message)"></i>
+                    <span v-if="message.is_edited" class="is-edited">(編集済み)</span>
                     <span class="time">{{ message.created_at | moment("HH:mm") }}</span>
                 </div>
                 <div class="content-line">

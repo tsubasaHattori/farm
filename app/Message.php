@@ -16,6 +16,7 @@ class Message extends Model
         'is_deleted',
         'deleted_at',
         'reply_message_id',
+        'is_edited',
     ];
 
     protected $dates = [

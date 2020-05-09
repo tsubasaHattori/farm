@@ -137,11 +137,13 @@ class HomeController extends Controller
         $targetMessage->update([
             'content'          => $content,
             'reply_message_id' => $reply_message_id,
+            'is_edited'        => true,
         ]);
 
         return [
             'content'          => $content,
             'reply_message_id' => $reply_message_id,
+            'is_edited'        => true,
         ];
     }
 }
