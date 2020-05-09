@@ -38565,7 +38565,9 @@ var render = function() {
                         ])
                   ]),
                   _vm._v(" "),
-                  message.reply_message_id && !message.is_deleted
+                  message.reply_message_id &&
+                  !message.is_deleted &&
+                  _vm.messageMap[message.reply_message_id]
                     ? _c("div", { staticClass: "reply-line" }, [
                         _c("div", { staticClass: "upper-line" }, [
                           _c("span", { staticClass: "writer" }, [

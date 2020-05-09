@@ -218,7 +218,7 @@ textarea {
                         </span>
                     </div>
                 </div>
-                <div v-if="message.reply_message_id && !message.is_deleted" class="reply-line">
+                <div v-if="message.reply_message_id && !message.is_deleted && messageMap[message.reply_message_id]" class="reply-line">
                     <div class="upper-line">
                         <span class="writer">
                             <i v-if="message.user_id != authUser.id" class="fa fa-reply fa-rotate-180" style="margin-right: 0px" aria-hidden="true"></i>
