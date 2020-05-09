@@ -2032,6 +2032,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   delimiters: ['${', '}'],
   props: ['authUser', 'users', 'initialMessages', 'initialMessageMap'],
@@ -38631,7 +38632,7 @@ var render = function() {
                         })
                       : _vm._e(),
                     _vm._v(" "),
-                    message.is_edited
+                    message.is_edited && message.user_id == _vm.authUser.id
                       ? _c("span", { staticClass: "is-edited" }, [
                           _vm._v("(編集済み)")
                         ])
@@ -38641,7 +38642,13 @@ var render = function() {
                       _vm._v(
                         _vm._s(_vm._f("moment")(message.created_at, "HH:mm"))
                       )
-                    ])
+                    ]),
+                    _vm._v(" "),
+                    message.is_edited && message.user_id != _vm.authUser.id
+                      ? _c("span", { staticClass: "is-edited" }, [
+                          _vm._v("(編集済み)")
+                        ])
+                      : _vm._e()
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "content-line" }, [

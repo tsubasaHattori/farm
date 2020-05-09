@@ -225,8 +225,9 @@ textarea {
                 </div>
                 <div class="middle-line">
                     <i v-if="!message.is_deleted && message.user_id == authUser.id" class="fa fa-edit" @click="edit(message)"></i>
-                    <span v-if="message.is_edited" class="is-edited">(編集済み)</span>
+                    <span v-if="message.is_edited && message.user_id == authUser.id" class="is-edited">(編集済み)</span>
                     <span class="time">{{ message.created_at | moment("HH:mm") }}</span>
+                    <span v-if="message.is_edited && message.user_id != authUser.id" class="is-edited">(編集済み)</span>
                 </div>
                 <div class="content-line">
                     <div v-if="message.is_deleted">
