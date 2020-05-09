@@ -19,9 +19,20 @@
     margin-bottom: 10px;
 }
 
-.write {
+.message-form-label {
     font-size: 25px;
     background: linear-gradient(transparent 70%, #a7d6ff 70%);
+}
+
+.message-form-label-edit {
+    margin-left: 65px;
+}
+
+.edit-cancel {
+    color: rgba(0, 0, 0, 0.7);
+    text-decoration: underline;
+    margin-left: 15px;
+    cursor: pointer;
 }
 
 .message {
@@ -53,6 +64,10 @@
 
 .fa-comment {
     color: #20B2AA;
+    cursor: pointer;
+}
+
+.fa-edit {
     cursor: pointer;
 }
 
@@ -198,12 +213,13 @@ textarea {
                 <div class="upper-line">
                     <span class="writer">
                     <i v-if="!message.is_deleted && message.user_id == authUser.id" id="trash" class="fa fa-trash fa-lg" @click="deleteMessage(message)"></i>
-                    <i v-if="!message.is_deleted && message.user_id == authUser.id" class="fa fa-comment fa-lg" style="margin-right: 3px;" @click="reply(message)"></i>
+                    <i v-if="!message.is_deleted && message.user_id == authUser.id" class="fa fa-comment fa-lg" style="margin-right: 3px;" @click="reply(message.id)"></i>
                     {{ users[message.user_id].name }}
-                    <i v-if="!message.is_deleted && message.user_id != authUser.id" class="fa fa-comment fa-lg" style="margin-left: 4px;" @click="reply(message)"></i>
+                    <i v-if="!message.is_deleted && message.user_id != authUser.id" class="fa fa-comment fa-lg" style="margin-left: 4px;" @click="reply(message.id)"></i>
                     </span>
                 </div>
                 <div class="middle-line">
+                    <i v-if="!message.is_deleted && message.user_id == authUser.id" class="fa fa-edit" @click="edit(message)"></i>
                     <span class="time">{{ message.created_at | moment("HH:mm") }}</span>
                 </div>
                 <div class="content-line">
@@ -245,16 +261,23 @@ textarea {
 
     <div class="message-form">
         <hr width = "100%">
-        <div class="write-block">
-            <span class="write">書き込み</span>
+        <div v-if="!isEditing" class="write-block">
+            <span class="message-form-label">書き込み</span>
+        </div>
+        <div v-else class="write-block">
+            <span class="message-form-label message-form-label-edit">メッセージ編集</span>
+            <span class="edit-cancel" @click="cancelEdit">取り消し</span>
         </div>
         <div v-if="replyMessageId" class="reply-block">
             <div class="reply-preview">
                 <div class="message others-message" style="margin-top: 0">
                 <span><i class="fa fa-remove fa-lg" @click="replyMessageId=null"></i> <span style="font-weight: bold;">リプライ : </span> {{ messageMap[replyMessageId].name }}</span>
                     <div class="content-line">
-                        <span class="content-box-null">
+                        <span v-if="!messageMap[replyMessageId].is_deleted" class="content-box-null">
                             <span class="content">{{ messageMap[replyMessageId].content }}</span>
+                        </span>
+                        <span v-else class="content-box-null">
+                            <span class="content">メッセージが削除されました</span>
                         </span>
                     </div>
                 </div>
@@ -263,7 +286,8 @@ textarea {
         <div class="store-form">
             内容<br>
             <textarea v-model="content" name="content" style="width: 100%; height: 80px;" required></textarea><br>
-            <input @click="storeMessage" class="btn btn-square-shadow" type="submit" value="投稿" :disabled="isPosting || !content">
+            <input v-if="!isEditing" @click="storeMessage" class="btn btn-square-shadow" type="submit" value="投稿" :disabled="isPosting || !content">
+            <input v-else @click="editMessage" class="btn btn-square-shadow" type="submit" value="修正" :disabled="isPosting || !content">
         </div>
         <hr width = "100%"></center>
     </div>
@@ -282,10 +306,12 @@ textarea {
         data: function () {
             return {
                 content: "",
+                isEditing: false,
                 isPosting: false,
                 messages: this.initialMessages,
                 messageMap: this.initialMessageMap,
                 replyMessageId: null,
+                editMessageId: null,
             }
         },
         mounted: function() {
@@ -330,7 +356,6 @@ textarea {
                     this.content = "";
                     this.replyMessageId = null,
                     this.getMessages(true);
-
                 })
                 .catch(error => console.log(error))
             },
@@ -352,10 +377,53 @@ textarea {
                 return true;
             },
 
-            reply: function(message) {
-                this.replyMessageId = message.id;
+            editMessage: function() {
+                this.isPosting = true;
+
+                var url = 'api/message/edit';
+                axios.post(url, {
+                    message_id: this.editMessageId,
+                    content: this.content,
+                    reply_message_id : this.replyMessageId,
+                })
+                .then((res)=>{
+                    this.isPosting = false;
+                    this.isEditing = false;
+                    this.content = "";
+                    this.editMessageId = null;
+                    this.replyMessageId = null;
+                    this.getMessages(true);
+                })
+                .catch(error => console.log(error))
+            },
+
+            edit: function(message) {
+                var self = this;
+
+                this.isEditing = true;
+                this.replyMessageId = null;
+                this.editMessageId = message.id;
+                this.content = message.content;
+                if (message.reply_message_id) {
+                    this.reply(message.reply_message_id);
+                } else {
+                    setTimeout(function() {
+                        self.$emit('store');
+                    }, 0);
+                }
+            },
+
+            cancelEdit: function() {
+                this.isEditing = false;
+                this.content = "";
+                this.editMessageId = null;
+                this.replyMessageId = null;
+            },
+
+            reply: function(reply_message_id) {
+                this.replyMessageId = reply_message_id;
                 this.$emit('store');
-            }
+            },
         },
         filters: {
             // moment: function (date) {

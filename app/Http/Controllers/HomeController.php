@@ -125,4 +125,23 @@ class HomeController extends Controller
             'content'    => $content,
         ];
     }
+
+    public function edit(Request $req) {
+        $message_id = $req->get('message_id');
+        $content = $req->get('content');
+        $reply_message_id = $req->get('reply_message_id');
+
+        $model = new Message();
+        $targetMessage = $model->find($message_id);
+
+        $targetMessage->update([
+            'content'          => $content,
+            'reply_message_id' => $reply_message_id,
+        ]);
+
+        return [
+            'content'          => $content,
+            'reply_message_id' => $reply_message_id,
+        ];
+    }
 }

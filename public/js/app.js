@@ -2002,16 +2002,42 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   delimiters: ['${', '}'],
   props: ['authUser', 'users', 'initialMessages', 'initialMessageMap'],
   data: function data() {
     return {
       content: "",
+      isEditing: false,
       isPosting: false,
       messages: this.initialMessages,
       messageMap: this.initialMessageMap,
-      replyMessageId: null
+      replyMessageId: null,
+      editMessageId: null
     };
   },
   mounted: function mounted() {
@@ -2075,8 +2101,50 @@ __webpack_require__.r(__webpack_exports__);
       });
       return true;
     },
-    reply: function reply(message) {
-      this.replyMessageId = message.id;
+    editMessage: function editMessage() {
+      var _this4 = this;
+
+      this.isPosting = true;
+      var url = 'api/message/edit';
+      axios.post(url, {
+        message_id: this.editMessageId,
+        content: this.content,
+        reply_message_id: this.replyMessageId
+      }).then(function (res) {
+        _this4.isPosting = false;
+        _this4.isEditing = false;
+        _this4.content = "";
+        _this4.editMessageId = null;
+        _this4.replyMessageId = null;
+
+        _this4.getMessages(true);
+      })["catch"](function (error) {
+        return console.log(error);
+      });
+    },
+    edit: function edit(message) {
+      var self = this;
+      this.isEditing = true;
+      this.replyMessageId = null;
+      this.editMessageId = message.id;
+      this.content = message.content;
+
+      if (message.reply_message_id) {
+        this.reply(message.reply_message_id);
+      } else {
+        setTimeout(function () {
+          self.$emit('store');
+        }, 0);
+      }
+    },
+    cancelEdit: function cancelEdit() {
+      this.isEditing = false;
+      this.content = "";
+      this.editMessageId = null;
+      this.replyMessageId = null;
+    },
+    reply: function reply(reply_message_id) {
+      this.replyMessageId = reply_message_id;
       this.$emit('store');
     }
   },
@@ -6631,7 +6699,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.day-change-block {\n    text-align: center;\n    margin-top: 35px;\n}\n.day-change {\n    display: inline-block;\n    width: 100px;\n    font-size: 12px;\n    border-radius: 8px;\n    background: #8EB8FF;\n    box-shadow: 0px\n     0px 0px 5px #8EB8FF;\n}\n.write-block {\n    text-align: center;\n    margin-bottom: 10px;\n}\n.write {\n    font-size: 25px;\n    background: linear-gradient(transparent 70%, #a7d6ff 70%);\n}\n.message {\n    margin-top: 30px;\n}\n.my-message {\n    text-align: right;\n}\n.writer .fa{\n    margin-right: 10px;\n}\n.time {\n    font-size: 12px;\n    opacity: 0.6;\n}\n.fa-trash {\n    cursor: pointer;\n    color: #CC3333;\n}\n.fa-remove {\n    cursor: pointer;\n    color: #CC3333;\n}\n.fa-comment {\n    color: #20B2AA;\n    cursor: pointer;\n}\n.reply-content {\n    font-size: 8px;\n    white-space: pre-wrap;\n    cursor: text;\n}\n.my-message .reply-line .content-line {\n    width: 50%;\n    text-align: right;\n    margin: 0.1em 0 0.1em auto;\n}\n.my-message .reply-line .content-box {\n    background: #D7EEFF;\n    box-shadow: 0px 0px 0px 5px #D7EEFF;\n    text-align: left;\n}\n.others-message .reply-line .content-line {\n    width: 50%;\n    margin: 0.1em 0 0.1em 0;\n}\n.others-message .reply-line .content-box {\n    background: #D7EEFF;\n    box-shadow: 0px 0px 0px 5px #D7EEFF;\n}\n.reply-line .reply-content-box-null {\n    background: #DDDDDD;\n    box-shadow: 0px 0px 0px 5px #DDDDDD;\n}\n.reply-line .writer {\n    font-size: 10px;\n}\n.my-message .content-line {\n    width: 70%;\n    text-align: right;\n    margin: 1em 0 1em auto;\n}\n.my-message .content-box {\n    background: #66FF99;\n    box-shadow: 0px 0px 0px 9px #66FF99;\n    text-align: left;\n}\n.others-message .content-line {\n    width: 70%;\n    margin: 1em 0 1em 0;\n}\n.others-message .content-box {\n    background: #ffeaea;\n    box-shadow: 0px 0px 0px 9px #ffeaea;\n}\n.content-box, .content-box-null {\n    color: #565656;\n    display: inline-block;\n    margin-left: 10px;\n    border-radius: 8px;\n}\n.content-box-null {\n    background: #DDDDDD;\n    box-shadow: 0px 0px 0px 9px #DDDDDD;\n}\n.content {\n    white-space: pre-wrap;\n    cursor: text;\n}\n.store-form {\n    width: 500px;\n}\n.reply-preview {\n    margin-left: 20%;\n}\n@media screen and (max-width: 560px) {\n.store-form {\n        width: 90%;\n}\n.reply-preview {\n        margin-left: 0;\n}\n}\n@media screen and (max-width: 960px) {\nstore-form {\n        width: 80%;\n}\n.reply-preview {\n        margin-left: 0;\n}\n}\ntextarea {\n    font-size: 16px;\n}\n.btn-square-shadow {\n    display: inline-block;\n    padding: 0.5em 1em;\n    text-decoration: none;\n    background: #fd9535;/*ボタン色*/\n    color: #FFF;\n    border-bottom: solid 4px #627295;\n    border-radius: 3px;\n}\n.btn-square-shadow:active {\n    /*ボタンを押したとき*/\n    transform: translateY(4px);/*下に動く*/\n    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);/*影を小さく*/\n    border-bottom: none;\n}\n", ""]);
+exports.push([module.i, "\n.day-change-block {\n    text-align: center;\n    margin-top: 35px;\n}\n.day-change {\n    display: inline-block;\n    width: 100px;\n    font-size: 12px;\n    border-radius: 8px;\n    background: #8EB8FF;\n    box-shadow: 0px\n     0px 0px 5px #8EB8FF;\n}\n.write-block {\n    text-align: center;\n    margin-bottom: 10px;\n}\n.message-form-label {\n    font-size: 25px;\n    background: linear-gradient(transparent 70%, #a7d6ff 70%);\n}\n.message-form-label-edit {\n    margin-left: 65px;\n}\n.edit-cancel {\n    color: rgba(0, 0, 0, 0.7);\n    text-decoration: underline;\n    margin-left: 15px;\n    cursor: pointer;\n}\n.message {\n    margin-top: 30px;\n}\n.my-message {\n    text-align: right;\n}\n.writer .fa{\n    margin-right: 10px;\n}\n.time {\n    font-size: 12px;\n    opacity: 0.6;\n}\n.fa-trash {\n    cursor: pointer;\n    color: #CC3333;\n}\n.fa-remove {\n    cursor: pointer;\n    color: #CC3333;\n}\n.fa-comment {\n    color: #20B2AA;\n    cursor: pointer;\n}\n.fa-edit {\n    cursor: pointer;\n}\n.reply-content {\n    font-size: 8px;\n    white-space: pre-wrap;\n    cursor: text;\n}\n.my-message .reply-line .content-line {\n    width: 50%;\n    text-align: right;\n    margin: 0.1em 0 0.1em auto;\n}\n.my-message .reply-line .content-box {\n    background: #D7EEFF;\n    box-shadow: 0px 0px 0px 5px #D7EEFF;\n    text-align: left;\n}\n.others-message .reply-line .content-line {\n    width: 50%;\n    margin: 0.1em 0 0.1em 0;\n}\n.others-message .reply-line .content-box {\n    background: #D7EEFF;\n    box-shadow: 0px 0px 0px 5px #D7EEFF;\n}\n.reply-line .reply-content-box-null {\n    background: #DDDDDD;\n    box-shadow: 0px 0px 0px 5px #DDDDDD;\n}\n.reply-line .writer {\n    font-size: 10px;\n}\n.my-message .content-line {\n    width: 70%;\n    text-align: right;\n    margin: 1em 0 1em auto;\n}\n.my-message .content-box {\n    background: #66FF99;\n    box-shadow: 0px 0px 0px 9px #66FF99;\n    text-align: left;\n}\n.others-message .content-line {\n    width: 70%;\n    margin: 1em 0 1em 0;\n}\n.others-message .content-box {\n    background: #ffeaea;\n    box-shadow: 0px 0px 0px 9px #ffeaea;\n}\n.content-box, .content-box-null {\n    color: #565656;\n    display: inline-block;\n    margin-left: 10px;\n    border-radius: 8px;\n}\n.content-box-null {\n    background: #DDDDDD;\n    box-shadow: 0px 0px 0px 9px #DDDDDD;\n}\n.content {\n    white-space: pre-wrap;\n    cursor: text;\n}\n.store-form {\n    width: 500px;\n}\n.reply-preview {\n    margin-left: 20%;\n}\n@media screen and (max-width: 560px) {\n.store-form {\n        width: 90%;\n}\n.reply-preview {\n        margin-left: 0;\n}\n}\n@media screen and (max-width: 960px) {\nstore-form {\n        width: 80%;\n}\n.reply-preview {\n        margin-left: 0;\n}\n}\ntextarea {\n    font-size: 16px;\n}\n.btn-square-shadow {\n    display: inline-block;\n    padding: 0.5em 1em;\n    text-decoration: none;\n    background: #fd9535;/*ボタン色*/\n    color: #FFF;\n    border-bottom: solid 4px #627295;\n    border-radius: 3px;\n}\n.btn-square-shadow:active {\n    /*ボタンを押したとき*/\n    transform: translateY(4px);/*下に動く*/\n    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.2);/*影を小さく*/\n    border-bottom: none;\n}\n", ""]);
 
 // exports
 
@@ -38521,7 +38589,7 @@ var render = function() {
                             staticStyle: { "margin-right": "3px" },
                             on: {
                               click: function($event) {
-                                return _vm.reply(message)
+                                return _vm.reply(message.id)
                               }
                             }
                           })
@@ -38537,7 +38605,7 @@ var render = function() {
                             staticStyle: { "margin-left": "4px" },
                             on: {
                               click: function($event) {
-                                return _vm.reply(message)
+                                return _vm.reply(message.id)
                               }
                             }
                           })
@@ -38546,6 +38614,17 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "middle-line" }, [
+                    !message.is_deleted && message.user_id == _vm.authUser.id
+                      ? _c("i", {
+                          staticClass: "fa fa-edit",
+                          on: {
+                            click: function($event) {
+                              return _vm.edit(message)
+                            }
+                          }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
                     _c("span", { staticClass: "time" }, [
                       _vm._v(
                         _vm._s(_vm._f("moment")(message.created_at, "HH:mm"))
@@ -38643,7 +38722,25 @@ var render = function() {
         [
           _c("hr", { attrs: { width: "100%" } }),
           _vm._v(" "),
-          _vm._m(2),
+          !_vm.isEditing
+            ? _c("div", { staticClass: "write-block" }, [
+                _c("span", { staticClass: "message-form-label" }, [
+                  _vm._v("書き込み")
+                ])
+              ])
+            : _c("div", { staticClass: "write-block" }, [
+                _c(
+                  "span",
+                  { staticClass: "message-form-label message-form-label-edit" },
+                  [_vm._v("メッセージ編集")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "span",
+                  { staticClass: "edit-cancel", on: { click: _vm.cancelEdit } },
+                  [_vm._v("取り消し")]
+                )
+              ]),
           _vm._v(" "),
           _vm.replyMessageId
             ? _c("div", { staticClass: "reply-block" }, [
@@ -38674,13 +38771,21 @@ var render = function() {
                       ]),
                       _vm._v(" "),
                       _c("div", { staticClass: "content-line" }, [
-                        _c("span", { staticClass: "content-box-null" }, [
-                          _c("span", { staticClass: "content" }, [
-                            _vm._v(
-                              _vm._s(_vm.messageMap[_vm.replyMessageId].content)
-                            )
-                          ])
-                        ])
+                        !_vm.messageMap[_vm.replyMessageId].is_deleted
+                          ? _c("span", { staticClass: "content-box-null" }, [
+                              _c("span", { staticClass: "content" }, [
+                                _vm._v(
+                                  _vm._s(
+                                    _vm.messageMap[_vm.replyMessageId].content
+                                  )
+                                )
+                              ])
+                            ])
+                          : _c("span", { staticClass: "content-box-null" }, [
+                              _c("span", { staticClass: "content" }, [
+                                _vm._v("メッセージが削除されました")
+                              ])
+                            ])
                       ])
                     ]
                   )
@@ -38715,15 +38820,25 @@ var render = function() {
               }),
               _c("br"),
               _vm._v(" "),
-              _c("input", {
-                staticClass: "btn btn-square-shadow",
-                attrs: {
-                  type: "submit",
-                  value: "投稿",
-                  disabled: _vm.isPosting || !_vm.content
-                },
-                on: { click: _vm.storeMessage }
-              })
+              !_vm.isEditing
+                ? _c("input", {
+                    staticClass: "btn btn-square-shadow",
+                    attrs: {
+                      type: "submit",
+                      value: "投稿",
+                      disabled: _vm.isPosting || !_vm.content
+                    },
+                    on: { click: _vm.storeMessage }
+                  })
+                : _c("input", {
+                    staticClass: "btn btn-square-shadow",
+                    attrs: {
+                      type: "submit",
+                      value: "修正",
+                      disabled: _vm.isPosting || !_vm.content
+                    },
+                    on: { click: _vm.editMessage }
+                  })
             ]),
             _vm._v(" "),
             _c("hr", { attrs: { width: "100%" } })
@@ -38759,14 +38874,6 @@ var staticRenderFns = [
         ])
       ]
     )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "write-block" }, [
-      _c("span", { staticClass: "write" }, [_vm._v("書き込み")])
-    ])
   }
 ]
 render._withStripped = true

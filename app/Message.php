@@ -9,6 +9,15 @@ class Message extends Model
 {
     protected $table = 'messages';
 
+    protected $fillable = [
+        'name',
+        'user_id',
+        'content',
+        'is_deleted',
+        'deleted_at',
+        'reply_message_id',
+    ];
+
     protected $dates = [
         'created_at', 'deleted_at',
     ];
